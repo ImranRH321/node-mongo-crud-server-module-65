@@ -17,6 +17,7 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+const ObjectId = require('mongodb').ObjectId
 
 //  ....
 async function run() {
@@ -24,20 +25,31 @@ async function run() {
     await client.connect();
     const userCollection = client.db("foodExpress").collection("users");
      
-    app.get('/user', async (req, res) => {
-      const  query = {}
-      const cursor = userCollection.find(query)
-      const result = await cursor.toArray()
-      res.send(result)
-    })
+     app.get('/user',  async (req,res) => {
+       const query  = {}
+       const cursor = userCollection.find(query)
+         const users = await cursor.toArray()
+         res.send(users) 
+     })
  
     // post create user 
     app.post("/user", async (req, res) => {
-      const newUser = req.body;
-      // console.log('user', newUser);
-      const result = await userCollection.insertOne(newUser)
-      res.send(result);
+       const newUser = req.body
+       console.log(newUser);
+       const result = await userCollection.insertOne(newUser)
+       console.log(result);
+        res.send(result)
     });
+
+ 
+    // delete user  
+ app.delete('/user/:id', async(req, res) => {
+    const id = req.params.id
+    const query = {}
+ })
+
+
+
   } finally {
     // await client.connect()
   }

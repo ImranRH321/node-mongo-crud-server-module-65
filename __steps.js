@@ -41,3 +41,9 @@
  * DELETE
  * ---------------------------
 */
+
+const { query } = require("express");
+
+// steps 
+
+// query ber korar kaj ta kore  
