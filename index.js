@@ -17,39 +17,48 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-const ObjectId = require('mongodb').ObjectId
+const ObjectId = require("mongodb").ObjectId;
 
 //  ....
 async function run() {
   try {
     await client.connect();
     const userCollection = client.db("foodExpress").collection("users");
-     
-     app.get('/user',  async (req,res) => {
-       const query  = {}
-       const cursor = userCollection.find(query)
-         const users = await cursor.toArray()
-         res.send(users) 
-     })
- 
-    // post create user 
-    app.post("/user", async (req, res) => {
-       const newUser = req.body
-       console.log(newUser);
-       const result = await userCollection.insertOne(newUser)
-       console.log(result);
-        res.send(result)
+
+    app.get("/user", async (req, res) => {
+      const query = {};
+      const cursor = userCollection.find(query);
+      const users = await cursor.toArray();
+      res.send(users);
     });
 
- 
-    // delete user  
- app.delete('/user/:id', async(req, res) => {
-    const id = req.params.id
-    const query = {}
- })
+    // update user 
+    app.get('/user/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: ObjectId(id) };
+      const result= await userCollection.findOne(query)
+      res.send(result)
+    })
 
-
-
+    // post create user
+    app.post("/user", async (req, res) => {
+      const newUser = req.body;
+      console.log(newUser);
+      const result = await userCollection.insertOne(newUser);
+      console.log(result);
+      res.send(result);
+    });
+   
+    // delete user
+    app.delete("/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      console.log("id", id);
+      console.log("query", query);
+      const result = await userCollection.deleteOne(query);
+      console.log("result ", result);
+      res.send(result);
+    });
   } finally {
     // await client.connect()
   }
