@@ -1,10 +1,10 @@
 const express = require("express");
-const cors = require('cors')
+const cors = require("cors");
 const app = express();
 
 const port = process.env.PORT || 5000;
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 // user: dbuser1
 // password: XOU3qtUlwNnL4htR
@@ -23,14 +23,21 @@ async function run() {
   try {
     await client.connect();
     const userCollection = client.db("foodExpress").collection("users");
-
-    //  ..
-    app.post("/user", (req, res) => {
-     const newUser = (req.body);
-    //  console.log('create user ', newUser);
-      res.send({result: 'success'})
+     
+    app.get('/user', async (req, res) => {
+      const  query = {}
+      const cursor = userCollection.find(query)
+      const result = await cursor.toArray()
+      res.send(result)
+    })
+ 
+    // post create user 
+    app.post("/user", async (req, res) => {
+      const newUser = req.body;
+      // console.log('user', newUser);
+      const result = await userCollection.insertOne(newUser)
+      res.send(result);
     });
-    //  ..
   } finally {
     // await client.connect()
   }
